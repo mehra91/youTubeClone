@@ -22,11 +22,11 @@ const Header = ({ text, setText, onSearch }) => {
           placeholder="Search"
           value={text}
           onChange={handleChange}
-          className="flex-1 bg-transparent outline-none px-4 py-2 text-sm text-white"
+          className="flex-1 bg-transparent outline-none  pl-5 text-sm text-white"
         />
         <button
           onClick={onSearch}
-          className="px-4 py-2 bg-gray-600 hover:bg-gray-500 transition"
+          className="px-4 py-2 bg-gray-600 hover:bg-gray-500 transition cursor-pointer h-full"
         >
           <FaSearch />
         </button>

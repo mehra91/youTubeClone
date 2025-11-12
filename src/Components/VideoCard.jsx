@@ -4,45 +4,86 @@ import { FaCheckCircle } from "react-icons/fa";
 
 const VideoCard = ({ searchQuery }) => {
   const [videos, setVideos] = useState([]);
+  const [nextToken, setNextToken] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const API_KEY = import.meta.env.VITE_API_KEY;
   const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-  useEffect(() => {
-    if (!searchQuery) return; // don't call API if empty
+  // 🔹 Fetch videos (with optional query + pageToken)
+  const getApiData = async (pageToken = "", query = "") => {
+    setLoading(true);
+    try {
+      const q = query || getRandomQuery(); // use random if empty
+      const res = await fetch(
+        `${BASE_URL}/search?part=snippet&q=${encodeURIComponent(
+          q
+        )}&type=video&maxResults=6&pageToken=${pageToken}&key=${API_KEY}`
+      );
+      const data = await res.json();
 
-    const getApiData = async () => {
-      try {
-        const res = await fetch(
-          `${BASE_URL}/search?part=snippet&q=${encodeURIComponent(
-            searchQuery
-          )}&type=video&maxResults=12&key=${API_KEY}`
-        );
-        const data = await res.json();
-        setVideos(data.items || []);
-      } catch (error) {
-        console.error("Error fetching videos:", error);
+      setVideos((prev) =>
+  pageToken ? [...prev, ...(data.items || [])] : (data.items || [])
+);
+
+      setNextToken(data.nextPageToken || "");
+    } catch (error) {
+      console.error("Error fetching videos:", error);
+    }
+    setLoading(false);
+  };
+
+  // 🔹 Random topics list
+  const randomTopics = [
+    "music", "travel", "football", "comedy", "tech",
+    "gaming", "movies", "news", "food", "nature"
+  ];
+
+  const getRandomQuery = () =>
+    randomTopics[Math.floor(Math.random() * randomTopics.length)];
+
+  // 🔹 First load: random videos
+  useEffect(() => {
+    getApiData();
+  }, []);
+
+  // 🔹 When user searches something
+  useEffect(() => {
+    if (searchQuery) getApiData("", searchQuery);
+  }, [searchQuery]);
+
+  // 🔹 Infinite scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const bottom =
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 200;
+
+      if (bottom && !loading && nextToken) {
+        getApiData(nextToken, searchQuery);
       }
     };
 
-    getApiData();
-  }, [searchQuery]);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [nextToken, loading, searchQuery]);
 
   return (
     <div className="flex flex-wrap justify-evenly gap-4 p-4 bg-[#181818]">
       {videos.map((video) => (
         <div
           key={video.id.videoId}
-          className="bg-[#212121] rounded-xl w-72 text-white hover:bg-[#2a2a2a] transition duration-300 cursor-pointer"
+          className="bg-black py-3 px-2 rounded-xl w-72 text-white hover:bg-[#2a2a2a] transition duration-300 cursor-pointer"
         >
           <iframe
-            className="w-full rounded-b-xl"
+            className="w-full h-auto rounded-b-xl rounded-t-xl"
             height="200"
             src={`https://www.youtube.com/embed/${video.id.videoId}`}
             title={video.snippet.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
           ></iframe>
+
           <div className="flex p-3 gap-3">
             <img
               src={video.snippet.thumbnails.default.url}
@@ -60,9 +101,14 @@ const VideoCard = ({ searchQuery }) => {
             </div>
             <BsThreeDotsVertical className="text-gray-300 hover:text-white text-xl" />
           </div>
-          
         </div>
       ))}
+
+      {loading && (
+        <p className="text-white text-center w-full mt-4">
+          Loading more videos...
+        </p>
+      )}
     </div>
   );
 };
