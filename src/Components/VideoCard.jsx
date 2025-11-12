@@ -16,7 +16,7 @@ const VideoCard = ({ searchQuery }) => {
         const res = await fetch(
           `${BASE_URL}/search?part=snippet&q=${encodeURIComponent(
             searchQuery
-          )}&type=video&maxResults=5&key=${API_KEY}`
+          )}&type=video&maxResults=12&key=${API_KEY}`
         );
         const data = await res.json();
         setVideos(data.items || []);
@@ -29,12 +29,20 @@ const VideoCard = ({ searchQuery }) => {
   }, [searchQuery]);
 
   return (
-    <div className="flex flex-wrap gap-4 p-4 bg-[#181818]">
+    <div className="flex flex-wrap justify-evenly gap-4 p-4 bg-[#181818]">
       {videos.map((video) => (
         <div
           key={video.id.videoId}
           className="bg-[#212121] rounded-xl w-72 text-white hover:bg-[#2a2a2a] transition duration-300 cursor-pointer"
         >
+          <iframe
+            className="w-full rounded-b-xl"
+            height="200"
+            src={`https://www.youtube.com/embed/${video.id.videoId}`}
+            title={video.snippet.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
           <div className="flex p-3 gap-3">
             <img
               src={video.snippet.thumbnails.default.url}
@@ -52,14 +60,7 @@ const VideoCard = ({ searchQuery }) => {
             </div>
             <BsThreeDotsVertical className="text-gray-300 hover:text-white text-xl" />
           </div>
-          <iframe
-            className="w-full rounded-b-xl"
-            height="200"
-            src={`https://www.youtube.com/embed/${video.id.videoId}`}
-            title={video.snippet.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-          ></iframe>
+          
         </div>
       ))}
     </div>

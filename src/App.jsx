@@ -3,8 +3,8 @@ import Header from "./Components/Header";
 import VideoCard from "./Components/VideoCard";
 
 const App = () => {
-  const [text, setText] = useState(""); // input field
-  const [searchQuery, setSearchQuery] = useState(""); // query to send to API
+  const [text, setText] = useState("music"); // input field
+  const [searchQuery, setSearchQuery] = useState("music"); // query to send to API
 
   const handleSearch = () => {
     setSearchQuery(text); // only triggers API call when button clicked
