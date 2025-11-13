@@ -8,8 +8,8 @@ const Header = ({ text, setText, onSearch }) => {
     <header className="flex items-center justify-between px-4 py-2 bg-[#2D3B41] text-white">
       {/* Left Section */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1 text-xl font-semibold">
-          <FaYoutube className="text-red-500 text-2xl" />
+        <div onClick={()=>window.location.reload()} className="flex items-center gap-1 text-xl font-semibold cursor-pointer">
+          <FaYoutube  className="text-red-500 text-2xl " />
           <span>YouTube</span>
           <span className="text-xs ml-1 opacity-70">IN</span>
         </div>

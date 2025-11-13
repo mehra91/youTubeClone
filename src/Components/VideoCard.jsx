@@ -14,13 +14,16 @@ const VideoCard = ({ searchQuery }) => {
   const getApiData = async (pageToken = "", query = "") => {
     setLoading(true);
     try {
+      
       const q = query || getRandomQuery(); // use random if empty
       const res = await fetch(
         `${BASE_URL}/search?part=snippet&q=${encodeURIComponent(
           q
         )}&type=video&maxResults=6&pageToken=${pageToken}&key=${API_KEY}`
       );
+        // console.log("Request sent:", res.url);
       const data = await res.json();
+      // console.log(data)
 
       setVideos((prev) =>
   pageToken ? [...prev, ...(data.items || [])] : (data.items || [])
@@ -35,7 +38,7 @@ const VideoCard = ({ searchQuery }) => {
 
   // 🔹 Random topics list
   const randomTopics = [
-    "music", "travel", "football", "comedy", "tech",
+     "tech", "travel", "football", "comedy", 
     "gaming", "movies", "news", "food", "nature"
   ];
 
