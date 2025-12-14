@@ -10,7 +10,7 @@ const VideoCard = ({ searchQuery }) => {
   const API_KEY = import.meta.env.VITE_API_KEY;
   const BASE_URL = "https://www.googleapis.com/youtube/v3";
 
-  // 🔹 Fetch videos (with optional query + pageToken)
+ 
   const getApiData = async (pageToken = "", query = "") => {
     setLoading(true);
     try {
@@ -36,7 +36,7 @@ const VideoCard = ({ searchQuery }) => {
     setLoading(false);
   };
 
-  // 🔹 Random topics list
+ 
   const randomTopics = [
      "tech", "travel", "football", "comedy", 
     "gaming", "movies", "news", "food", "nature"
@@ -45,17 +45,17 @@ const VideoCard = ({ searchQuery }) => {
   const getRandomQuery = () =>
     randomTopics[Math.floor(Math.random() * randomTopics.length)];
 
-  // 🔹 First load: random videos
+ 
   useEffect(() => {
     getApiData();
   }, []);
 
-  // 🔹 When user searches something
+   
   useEffect(() => {
     if (searchQuery) getApiData("", searchQuery);
   }, [searchQuery]);
 
-  // 🔹 Infinite scroll
+  
   useEffect(() => {
     const handleScroll = () => {
       const bottom =
